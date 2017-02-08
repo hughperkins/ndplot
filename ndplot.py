@@ -4,7 +4,6 @@
 
 import pyglet
 import math
-from math import pi, sin, cos
 import numpy as np
 from pyglet.gl import *
 
@@ -35,8 +34,10 @@ window.push_handlers(pyglet.window.event.WindowEventLogger())
 
 @window.event
 def on_mouse_drag(x, y, dx, dy, button, modifiers):
+    print('drag, button=%s' % button)
     global rx, ry, rz
     global points
+    global projection_basis
 
     R1 = np.identity(K)
     theta = dx * 3.1416 / 180
@@ -61,8 +62,13 @@ def on_mouse_drag(x, y, dx, dy, button, modifiers):
     R2[2, 1] = math.sin(phi)
     R2[1, 2] = - R2[2, 1]
 
-    points = points.dot(R1)
-    points = points.dot(R2)
+    # points = points.dot(R1)
+    # points = points.dot(R2)
+    projection_basis = projection_basis.dot(R1)
+    projection_basis = projection_basis.dot(R2)
+    # projection_basis, _ = np.linalg.qr(projection_basis)
+    projection_basis /= np.linalg.norm(projection_basis)
+    # print(projection_basis, np.linalg.norm(projection_basis))
 
     # ry += dx
     # rx += dy
@@ -105,7 +111,9 @@ def on_draw():
     glRotatef(ry, 0, 1, 0)
     # torus.draw()
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec(1.0, 1.0, 1.0, 0))
-    for point in points:
+
+    points_ = points.dot(projection_basis)
+    for point in points_:
         glPushMatrix()
         glTranslatef(point[0], point[1], point[2])
         glScalef(0.01, 0.01, 0.01)
@@ -191,6 +199,7 @@ setup()
 N = 1000
 K = 4
 # points = np.random.randn(N, K) * 0.5
+np.random.seed(123)
 A = np.random.randn(K)
 cov = A.T.dot(A) + 0.1 * np.identity(K)
 points = np.random.multivariate_normal(
@@ -206,6 +215,12 @@ for i in range(squared_side):
         squared[i * squared_side + j][0] = i / squared_side
         squared[i * squared_side + j][1] = j / squared_side
         squared[i * squared_side + j][2] = (i * i + j * j) / squared_side / squared_side
+
+# projection_basis = np.random.randn(K, K)
+projection_basis = np.identity(K)
+# projection_basis[:3, :3] = np.identity(3)
+projection_basis, _ = np.linalg.qr(projection_basis)
+print(projection_basis)
 
 rx = ry = rz = 0
 
