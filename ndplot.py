@@ -49,33 +49,47 @@ def on_mouse_drag(x, y, dx, dy, button, modifiers):
     global points
     global projection_basis
 
-    R1 = np.identity(K)
     theta = dx * 3.1416 / 180
 
-    # # rotates around axis into screen
-    # R[0, 0] = math.cos(theta)
-    # R[1, 1] = R[0, 0]
-    # R[1, 0] = math.sin(theta)
-    # R[0, 1] = - math.sin(theta)
+    if modifiers == 0:
+        R1 = np.identity(K)
+        # rotates around vertical axis (vertical, coplanar with the screen surface)
+        R1[0, 0] = math.cos(theta)
+        R1[2, 2] = R1[0, 0]
+        R1[2, 0] = math.sin(theta)
+        R1[0, 2] = - R1[2, 0]
 
-    # rotates around vertical axis (vertical, coplanar with the screen surface)
-    R1[0, 0] = math.cos(theta)
-    R1[2, 2] = R1[0, 0]
-    R1[2, 0] = math.sin(theta)
-    R1[0, 2] = - R1[2, 0]
+        phi = dy * 3.1416 / 180
+        R2 = np.identity(K)
+        # rotates around left-right axis (axis coplanar with screen surface)
+        R2[1, 1] = math.cos(phi)
+        R2[2, 2] = R2[0, 0]
+        R2[2, 1] = math.sin(phi)
+        R2[1, 2] = - R2[2, 1]
 
-    phi = dy * 3.1416 / 180
-    R2 = np.identity(K)
-    # rotates around left-right axis (axis coplanar with screen surface)
-    R2[1, 1] = math.cos(phi)
-    R2[2, 2] = R2[0, 0]
-    R2[2, 1] = math.sin(phi)
-    R2[1, 2] = - R2[2, 1]
+        # points = points.dot(R1)
+        # points = points.dot(R2)
+        projection_basis = projection_basis.dot(R1)
+        projection_basis = projection_basis.dot(R2)
+    elif modifiers == key.MOD_CTRL:
+        R1 = np.identity(K)
+        # rotates around axis into screen
+        R1[0, 0] = math.cos(theta)
+        R1[1, 1] = R1[0, 0]
+        R1[1, 0] = math.sin(theta)
+        R1[0, 1] = - R1[1, 0]
 
-    # points = points.dot(R1)
-    # points = points.dot(R2)
-    projection_basis = projection_basis.dot(R1)
-    projection_basis = projection_basis.dot(R2)
+        phi = dy * 3.1416 / 180
+        R2 = np.identity(K)
+        # rotates around left-right axis (axis coplanar with screen surface)
+        R2[1, 1] = math.cos(phi)
+        R2[2, 2] = R2[0, 0]
+        R2[2, 1] = math.sin(phi)
+        R2[1, 2] = - R2[2, 1]
+
+        projection_basis = projection_basis.dot(R1)
+        projection_basis = projection_basis.dot(R2)
+
     # projection_basis, _ = np.linalg.qr(projection_basis)
     projection_basis /= np.linalg.norm(projection_basis)
     # print(projection_basis, np.linalg.norm(projection_basis))
@@ -150,7 +164,7 @@ def on_draw():
     #     gluSphere(sphere, 1.0, 10, 10)
     #     glPopMatrix()
 
-    AXIS_THICKNESS = 0.03
+    # AXIS_THICKNESS = 0.03
 
     # glColor3f(1, 1, 0)
     # pyglet.gl.glLineWidth(10.5)
