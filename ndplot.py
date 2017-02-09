@@ -6,6 +6,7 @@ import pyglet
 import math
 import sys
 import numpy as np
+from pyglet import font
 from pyglet.gl import *
 from pyglet.window import key
 
@@ -24,6 +25,9 @@ except pyglet.window.NoSuchConfigException:
 window.push_handlers(pyglet.window.event.WindowEventLogger())
 
 
+np.set_printoptions(suppress=True, precision=3)
+
+
 @window.event
 def on_key_press(symbol, modifiers):
     print(symbol, modifiers)
@@ -40,6 +44,33 @@ def on_key_press(symbol, modifiers):
 # @window.event
 # def on_mouse_press(x, y, button, modifiers):
 #     print(x, y, button, modifiers)
+
+
+# helv = font.load('Helvetica', window.width / 15.0)
+# hello_world = font.Text(
+#     helv,
+#     'Hello, World!',
+#     x=window.width / 2,
+#     y=window.height / 2,
+#     halign=font.Text.CENTER,
+#     valign=font.Text.CENTER,
+#     color=(0, 1, 1, 1.0),
+# )
+
+
+def draw_text(text, x=0, y=0, size=0.02, color=(1, 1, 1, 1)):
+    helv = font.load('Helvetica', window.width * size)
+    y = 1 - y
+    hello_world = font.Text(
+        helv,
+        text,
+        x=window.width * x,
+        y=window.height * y,
+        halign=font.Text.LEFT,
+        valign=font.Text.TOP,
+        color=color,
+    )
+    hello_world.draw()
 
 
 @window.event
@@ -140,6 +171,7 @@ def nparray2_to_pygletmatrix(M):
 @window.event
 def on_draw():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     glTranslatef(0, 0, -4)
     glRotatef(rz, 0, 0, 1)
@@ -198,6 +230,20 @@ def on_draw():
         glPopMatrix()
 
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec(0.5, 0, 0.3, 1))
+
+    glDisable(GL_LIGHTING)
+    glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()
+    glMatrixMode(GL_PROJECTION)
+    glPushMatrix()
+    glLoadIdentity()
+    gluOrtho2D(0, window.width, 0, window.height)
+    glColor4f(1, 1, 1, 0)
+    # hello_world.draw()
+    # draw_text('hello!', x=0, y=0)
+    draw_text(str(projection_basis))
+    glPopMatrix()
+    glEnable(GL_LIGHTING)
 
 
 # Define a simple function to create ctypes arrays of floats:
