@@ -18,10 +18,10 @@ Anyway, this is what I have for now.
 
 I looked at the following earlier projects before writing this:
 
-- hypertools https://github.com/ContextLab/hypertools  Seems nice, but based on matplotlib, so limited possibility to customize how one drags around the viewport?  and customize the UI etc
-- https://github.com/mikasarkinjain/hyperdimensional-data-visualization  Sounds similar to what I'm trying here, but it's implemented in a language called "Processing", which is java-like (I think?)
+- hypertools https://github.com/ContextLab/hypertools  Seems nice.  Python, matplotlib.  Projection from hyperspace into 3 dimensions, using SVD
+- https://github.com/mikasarkinjain/hyperdimensional-data-visualization  Written in 'Processing' language.  Shows 3 dimensions in the viewer, and 3 additional dimensions via red/green/blue shading.
 
-I also looked briefly at how https://github.com/facebook/UETorch is implemented, or at least, what engine they are using.  They are using Unreal engine.  I think that's overkill for what I have/had in mind :-P
+Hypertools seems cool.  I wanted a bit more flexibility to customize how one drags around the viewport, the UI etc.  And hypertools seems to fix the projection plane to the results of SVD essentially?  Sarkin-Jain's project sounds similar to what I'm trying here.  The main reason I didnt consider using it directly is because I wanted something written in Python ideally.  I also looked briefly at how https://github.com/facebook/UETorch is implemented, or at least, what engine they are using.  They are using Unreal engine.  I think that's overkill for what I have/had in mind :-P
 
 In other news, I think [Pyglet](https://bitbucket.org/pyglet/pyglet/wiki/Home), which I'm using here, works quite well for what I want/wanted:
 - handles key presses with almost no effort, and mouse drags
