@@ -14,7 +14,7 @@ This sort of works.  But I dont find being able to drag around in 4 dimensions a
 
 Anyway, this is what I have for now.
 
-![](img/ndplot.png)
+![](img/ndplotb.png)
 
 I looked at the following earlier projects before writing this:
 

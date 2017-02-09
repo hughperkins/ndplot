@@ -23,9 +23,8 @@ except pyglet.window.NoSuchConfigException:
 
 
 window.push_handlers(pyglet.window.event.WindowEventLogger())
-
-
 np.set_printoptions(suppress=True, precision=3)
+rotation_axes = [0, 1, 2]
 
 
 @window.event
@@ -33,6 +32,14 @@ def on_key_press(symbol, modifiers):
     print(symbol, modifiers)
     if symbol == key.C and modifiers == key.MOD_CTRL:
         sys.exit(0)
+    elif symbol == key.W:
+        # for i, k in enumerate(rotation_axes):
+            # rotation_axes[i] = (k + 1) % K
+        # rotation_axes[0] = (rotation_axes[0] - 2 + 1) % (K - 2) + 2
+        if rotation_axes[0] == 0:
+            rotation_axes[0] = 3
+        else:
+            rotation_axes[0] = 0
 
 
 # @window.event
@@ -79,24 +86,29 @@ def on_mouse_drag(x, y, dx, dy, button, modifiers):
     global rx, ry, rz
     global points
     global projection_basis
+    global rotation_axes
 
     theta = dx * 3.1416 / 180
 
+    axs = rotation_axes
+    a0 = axs[0]
+    a1 = axs[1]
+    a2 = axs[2]
     if modifiers == 0:
         R1 = np.identity(K)
         # rotates around vertical axis (vertical, coplanar with the screen surface)
-        R1[0, 0] = math.cos(theta)
-        R1[2, 2] = R1[0, 0]
-        R1[2, 0] = math.sin(theta)
-        R1[0, 2] = - R1[2, 0]
+        R1[a0, a0] = math.cos(theta)
+        R1[a2, a2] = R1[a0, a0]
+        R1[a2, a0] = math.sin(theta)
+        R1[a0, a2] = - R1[a2, a0]
 
         phi = dy * 3.1416 / 180
         R2 = np.identity(K)
         # rotates around left-right axis (axis coplanar with screen surface)
-        R2[1, 1] = math.cos(phi)
-        R2[2, 2] = R2[0, 0]
-        R2[2, 1] = math.sin(phi)
-        R2[1, 2] = - R2[2, 1]
+        R2[a1, a1] = math.cos(phi)
+        R2[a2, a2] = R2[a0, a0]
+        R2[a2, a1] = math.sin(phi)
+        R2[a1, a2] = - R2[a2, a1]
 
         # points = points.dot(R1)
         # points = points.dot(R2)
@@ -105,18 +117,18 @@ def on_mouse_drag(x, y, dx, dy, button, modifiers):
     elif modifiers == key.MOD_CTRL:
         R1 = np.identity(K)
         # rotates around axis into screen
-        R1[0, 0] = math.cos(theta)
-        R1[1, 1] = R1[0, 0]
-        R1[1, 0] = math.sin(theta)
-        R1[0, 1] = - R1[1, 0]
+        R1[a0, a0] = math.cos(theta)
+        R1[a1, a1] = R1[a0, a0]
+        R1[a1, a0] = math.sin(theta)
+        R1[a0, a1] = - R1[a1, a0]
 
         phi = dy * 3.1416 / 180
         R2 = np.identity(K)
         # rotates around left-right axis (axis coplanar with screen surface)
-        R2[1, 1] = math.cos(phi)
-        R2[2, 2] = R2[0, 0]
-        R2[2, 1] = math.sin(phi)
-        R2[1, 2] = - R2[2, 1]
+        R2[a1, a1] = math.cos(phi)
+        R2[a2, a2] = R2[a0, a0]
+        R2[a2, a1] = math.sin(phi)
+        R2[a1, a2] = - R2[a2, a1]
 
         projection_basis = projection_basis.dot(R1)
         projection_basis = projection_basis.dot(R2)
@@ -231,6 +243,23 @@ def on_draw():
 
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec(0.5, 0, 0.3, 1))
 
+    helv = font.load('Helvetica', np.random.randn() * 20)
+    hello_world = font.Text(
+        helv,
+        'hello!',
+        x=0,
+        y=0,
+        halign=font.Text.CENTER,
+        valign=font.Text.CENTER,
+        color=color,
+    )
+    glPushMatrix()
+    glRotatef(np.random.randint(180), np.random.randn(), np.random.randn(), np.random.randn())
+    glDisable(GL_LIGHTING)
+    hello_world.draw()
+    glEnable(GL_LIGHTING)
+    glPopMatrix()
+
     glDisable(GL_LIGHTING)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
@@ -241,7 +270,10 @@ def on_draw():
     glColor4f(1, 1, 1, 0)
     # hello_world.draw()
     # draw_text('hello!', x=0, y=0)
-    draw_text(str(projection_basis))
+
+    draw_text('Axes: ' + str(rotation_axes))
+    draw_text('Projection basis: ' + str(projection_basis), y=0.1)
+
     glPopMatrix()
     glEnable(GL_LIGHTING)
 
