@@ -4,8 +4,10 @@
 
 import pyglet
 import math
+import sys
 import numpy as np
 from pyglet.gl import *
+from pyglet.window import key
 
 
 try:
@@ -22,9 +24,17 @@ except pyglet.window.NoSuchConfigException:
 window.push_handlers(pyglet.window.event.WindowEventLogger())
 
 
+@window.event
+def on_key_press(symbol, modifiers):
+    print(symbol, modifiers)
+    if symbol == key.C and modifiers == key.MOD_CTRL:
+        sys.exit(0)
+
+
 # @window.event
-# def on_key_press(symbol, modifiers):
-#     print(symbol, modifiers)
+# def on_text(text):
+#     if text == 'q':
+#         sys.exit(0)
 
 
 # @window.event
@@ -216,6 +226,9 @@ points = np.random.multivariate_normal(
     cov=cov,
     size=(N,)
 )
+# poly = np.randn()
+for point in points:
+    point[0] += point[1] + point[1] * point[2] + point[3]
 
 squared_side = 5
 squared = np.zeros((squared_side * squared_side, K))
