@@ -101,6 +101,18 @@ def on_resize(width, height):
 sphere = gluNewQuadric()
 
 
+def nparray2_to_pygletmatrix(M):
+    rows = M.shape[0]
+    cols = M.shape[1]
+    assert rows == cols
+    # size = rows * cols
+    a = (GLfloat * 16)(0 * 16)
+    for row in range(M.shape[0]):
+        for col in range(M.shape[1]):
+            a[col * rows + row] = M[row, col]
+    return a
+
+
 @window.event
 def on_draw():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -137,32 +149,29 @@ def on_draw():
     #     ('v3f', (0.0, 0.0, 0.0, 1.0, 0.0, 0.0))
     # )
 
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec(1.0, 0.0, 0.0, 0))
-    gluCylinder(sphere, AXIS_THICKNESS, AXIS_THICKNESS, 1.0, 10, 10)
-
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec(0, 1.0, 0.0, 0))
+    # origin
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec(0.5, 1.0, 0.0, 0))
     glPushMatrix()
-    glRotatef(-90, 1, 0, 0)
-    glColor3f(0, 1, 0)
-    # pyglet.gl.glLineWidth(10.5)
-    # pyglet.graphics.draw(
-    #     2, pyglet.gl.GL_LINES,
-    #     ('v3f', (0.0, 0.0, 0.0, 1.0, 0.0, 0.0))
-    # )
-    gluCylinder(sphere, AXIS_THICKNESS, AXIS_THICKNESS, 1.0, 10, 10)
+    glScalef(0.05, 0.05, 0.05)
+    gluSphere(sphere, 1.0, 10, 10)
     glPopMatrix()
 
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec(0, 0, 1.0, 0))
-    glPushMatrix()
-    glRotatef(-90, 0, 1, 0)
-    glColor3f(0, 1, 0)
-    # pyglet.gl.glLineWidth(10.5)
-    # pyglet.graphics.draw(
-    #     2, pyglet.gl.GL_LINES,
-    #     ('v3f', (0.0, 0.0, 0.0, 1.0, 0.0, 0.0))
-    # )
-    gluCylinder(sphere, AXIS_THICKNESS, AXIS_THICKNESS, 1.0, 10, 10)
-    glPopMatrix()
+    for k in range(K):
+        k_bin = format(k + 1, '03b')
+        color = [0, 0, 0, 0]
+        for i, b in enumerate(k_bin):
+            if b == '1':
+                color[i] = 1
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec(*color))
+        glPushMatrix()
+        axis_v = np.zeros(K)
+        axis_v[k] = 1
+        axis_v = axis_v.dot(projection_basis)
+
+        glTranslatef(axis_v[0], axis_v[1], axis_v[2])
+        glScalef(0.05, 0.05, 0.05)
+        gluSphere(sphere, 1.0, 10, 10)
+        glPopMatrix()
 
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec(0.5, 0, 0.3, 1))
 
