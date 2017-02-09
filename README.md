@@ -8,7 +8,7 @@ The concept is:
 - project onto 3d hypercube/plane
 - can rotate the 3d projection freely, to view it from any angle (simply drag the mouse, with or without ctrl
 key, to do this;  pressing ctrl key changes the left-right drag axis)
-- can use `w` key to rotate instead around a different axis, beyond x,y,z; and then drag the mouse
+- can use `w` key to change the rotation axes, into a hyper-axis; and then drag the mouse, to drag around in hyperspace
 
 This sort of works.  But I dont find being able to drag around in 4 dimensions as useful as I thought I would...
 
