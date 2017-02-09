@@ -14,6 +14,8 @@ This sort of works.  But I dont find being able to drag around in 4 dimensions a
 
 Anyway, this is what I have for now.
 
+![](img/ndplot.png)
+
 I looked at the following earlier projects before writing this:
 
 - hypertools https://github.com/ContextLab/hypertools  Seems nice, but based on matplotlib, so limited possibility to customize how one drags around the viewport?  and customize the UI etc
