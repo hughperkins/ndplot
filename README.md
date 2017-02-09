@@ -23,7 +23,7 @@ I looked at the following earlier projects before writing this:
 
 I also looked briefly at how https://github.com/facebook/UETorch is implemented, or at least, what engine they are using.  They are using Unreal engine.  I think that's overkill for what I have/had in mind :-P
 
-In other news, I think Pyglet works quite well for what I want/wanted:
+In other news, I think [Pyglet](https://bitbucket.org/pyglet/pyglet/wiki/Home), which I'm using here, works quite well for what I want/wanted:
 - handles key presses with almost no effort, and mouse drags
 - opengl, of course
   - (and the opengl wrapping works pretty nicely, no major 'ow!' points or anything)
